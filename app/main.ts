@@ -1,4 +1,3 @@
-import dotenv from 'dotenv';
 import { PrismaClient } from '@prisma/client';
 import { useFluent } from "@grammyjs/fluent";
 import { bot } from './lib/bot';
@@ -9,13 +8,12 @@ import ytdlp from "./../queue/ytdlp";
 import express from 'express'
 import quality from './lib/quality';
 import path from 'path'
-
-dotenv.config()
+import config from '../config';
 
 const db = new PrismaClient({
   datasources: {
     db: {
-      url: process.env.DATABASE_URL,
+      url: config.DATABASE_URL,
     },
   },
   log: [
@@ -42,11 +40,11 @@ export const fluent = new Fluent();
 const server = express()
 server.use(express.json())
 server.use(express.static(path.resolve(__dirname, "./../public")))
-server.post(`/bot${process.env.BOT_TOKEN}`, webhookCallback(bot, 'express'))
+server.post(`/bot${config.BOT_TOKEN}`, webhookCallback(bot, 'express'))
 server.get('', (req, res) => res.json({ status: "Not Found" }))
 
-server.listen(process.env.SERVER_PORT, () => { ytdlp.drain() })
-bot.api.setWebhook(`${process.env.DOMAIN_NAME}/bot${process.env.BOT_TOKEN}`)
+server.listen(config.SERVER_PORT, () => { ytdlp.drain() })
+bot.api.setWebhook(`${config.DOMAIN_NAME}/bot${config.BOT_TOKEN}`)
 
 async function main() {
   // telegram bot configurations...

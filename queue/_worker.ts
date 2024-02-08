@@ -4,13 +4,11 @@ import path from 'path';
 import { InputFile , Bot} from 'grammy';
 import { autoRetry } from "@grammyjs/auto-retry";
 import fs from 'fs';
-import dotenv from 'dotenv'
+import config from '../config';
 
-dotenv.config()
-
-const bot = new Bot(String(process.env.BOT_TOKEN) ,  {
+const bot = new Bot(String(config.BOT_TOKEN) ,  {
   client: {
-      apiRoot: 'http://127.0.0.1:8081',
+      apiRoot: config.apiRoot,
   },
 });
 bot.api.config.use(autoRetry({
@@ -23,7 +21,7 @@ const worker = new Worker('ytdlp', async job => {
   const callback_data = job.data.callback_query.split('___');
   const [action , video_id , format_id , quality , ext , duration] = callback_data;
   const name = `${video_id}_${format_id}` 
-  const spawn_yt_dlp = spawn('yt-dlp', ext == 'mp4' ? ['--proxy',process.env.PROXY,'-f',format_id+'[ext=mp4]+bestaudio[ext=m4a]','-o' , path.join(__dirname,`./../public/${name}`), video_id] : ['--proxy',process.env.PROXY,'-f',format_id,'-o' , path.join(__dirname,`./../public/${name}`), video_id]);
+  const spawn_yt_dlp = spawn('yt-dlp', ext == 'mp4' ? ['--proxy',config.PROXY,'-f',format_id+'[ext=mp4]+bestaudio[ext=m4a]','-o' , path.join(__dirname,`./../public/${name}`), video_id] : ['--proxy',config.PROXY,'-f',format_id,'-o' , path.join(__dirname,`./../public/${name}`), video_id]);
   let timer = Date.now()
   spawn_yt_dlp.stdout.on('data', async(data) => {
     const report = data;
@@ -43,7 +41,7 @@ const worker = new Worker('ytdlp', async job => {
     await bot.api.sendChatAction(job.data.user_id , ext == "mp4" ? "record_video" : "record_voice")
     const file_path = execSync(`find  ${path.join(__dirname,'./../public')} -name "${name}*"`).toString().trim()
     const file_data : any = {
-      media : new InputFile({url : `https://${process.env.DOMAIN_NAME}/${file_path.split('/').pop()}`}),
+      media : new InputFile({url : `https://${config.DOMAIN_NAME}/${file_path.split('/').pop()}`}),
       caption : `<b>${title}</b>\n📺 Quality : ${quality}\n🌐 Source : youtu.be/${video_id}`,
       parse_mode : 'HTML',
       duration : duration
