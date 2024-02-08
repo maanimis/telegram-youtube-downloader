@@ -3,7 +3,7 @@ import { InlineKeyboard, InputFile } from "grammy";
 import { exec, execSync } from "child_process";
 import url from 'url'
 import {bot} from './bot'
-import config from '../../config';
+import config from './../../config';
 
 function formatBytes(bytes: number) {
     var marker = 1024; // Change to 1000 if required

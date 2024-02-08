@@ -4,7 +4,7 @@ import path from 'path';
 import { InputFile , Bot} from 'grammy';
 import { autoRetry } from "@grammyjs/auto-retry";
 import fs from 'fs';
-import config from '../config';
+import config from './../config';
 
 const bot = new Bot(String(config.BOT_TOKEN) ,  {
   client: {

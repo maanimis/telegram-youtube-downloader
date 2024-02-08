@@ -1,8 +1,5 @@
 import { Queue } from 'bullmq';
-import dotenv from "dotenv"
-import config from '../config';
-
-dotenv.config({path : './../.env'})
+import config from './../config';
 
 const ytdlp = new Queue('ytdlp' , {connection : {
     host : config.REDIS_HOST,

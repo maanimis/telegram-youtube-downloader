@@ -8,7 +8,7 @@ import ytdlp from "./../queue/ytdlp";
 import express from 'express'
 import quality from './lib/quality';
 import path from 'path'
-import config from '../config';
+import config from './../config';
 
 const db = new PrismaClient({
   datasources: {
